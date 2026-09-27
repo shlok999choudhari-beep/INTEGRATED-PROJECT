@@ -1,0 +1,19 @@
+{
+    "files.associations": {
+        "*.glsl": "glsl",
+        "*.vert": "glsl",
+        "*.frag": "glsl",
+        "*.vs": "glsl",
+        "*.fs": "glsl"
+    },
+    "python.defaultInterpreterPath": "C:/Users/shlok/AppData/Local/Python/bin/python.exe",
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.default.cStandard": "c11",
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/include",
+        "${workspaceFolder}/build/_deps/glfw-src/include",
+        "${workspaceFolder}/build/_deps/glm-src"
+    ],
+    "cmake.sourceDirectory": "${workspaceFolder}",
+    "cmake.buildDirectory": "${workspaceFolder}/build"
+}

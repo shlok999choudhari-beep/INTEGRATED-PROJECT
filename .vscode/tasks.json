@@ -1,0 +1,36 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build & Run GLUT C++ File",
+            "type": "shell",
+            "command": "cmd /c compile_glut.bat \"${file}\"",
+            "problemMatcher": ["$gcc"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Run Python OpenGL Demo",
+            "type": "shell",
+            "command": "python python/main.py",
+            "problemMatcher": [],
+            "group": "build"
+        },
+        {
+            "label": "Run Headless OpenGL Test",
+            "type": "shell",
+            "command": "python python/test_opengl.py",
+            "problemMatcher": [],
+            "group": "test"
+        },
+        {
+            "label": "Build Modern C++ OpenGL Demo (CMake)",
+            "type": "shell",
+            "command": "cmd /c build_and_run.bat",
+            "problemMatcher": ["$gcc"],
+            "group": "build"
+        }
+    ]
+}
