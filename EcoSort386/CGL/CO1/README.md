@@ -180,18 +180,24 @@ From the `EcoSort386/CGL/CO1/` directory:
    build_co1.bat --capture-all
    ```
 
-### Interactive Keyboard Controls
-| Key | Action |
+### Interactive Keyboard & Mouse Controls
+| Control | Action |
 | :--- | :--- |
-| `1` | Switch to **Stage 1**: Practical No. 01 Triangle |
-| `2` | Switch to **Stage 2**: Geometric Primitives |
-| `3` | Switch to **Stage 3**: Colored Objects & Shading |
-| `4` | Switch to **Stage 4**: EcoSort E-Waste Bins |
-| `5` | Switch to **Stage 5**: Full EcoSort 386 2D Scene |
-| `SPACE` | **Pause / Resume** automatic truck driving animation |
+| `1` – `5` | Switch stages (`5` = Smart E-Waste Deposit Kiosk & Dispatch) |
+| **Mouse Click on Bins** | Click any of the 3 bins to select category (**R**: Recycle, **H**: Hazard, **U**: Reuse) |
+| `R` / `H` / `U` Keys | Hotkey to select waste category and update live reward credit preview |
+| **Mouse Click on Button** | Click `[>> CLICK TO DEPOSIT <<]` button to trigger deposit transaction |
+| `D` or `ENTER` Keys | Hotkey to execute deposit transaction & dispatch collection truck |
+| `SPACE` | **Pause / Resume** automatic animation |
 | `LEFT` / `RIGHT` | **Manual Drive**: Nudge the truck along the roadway |
 | `S` or `s` | Save high-resolution PNG screenshot of active stage |
 | `ESC` | Exit application cleanly |
+
+### 🔄 Multi-Subject Integration: CGL $\leftrightarrow$ PL / PSOOP
+The graphics interface functions as the **Human-Machine Interface (HMI)** for EcoSort:
+1. **User Input / Selection**: Selecting waste category sets reward incentives (+40 Cr for R, +60 Cr for H, +80 Cr for U).
+2. **Transaction Ledger Execution**: Triggering `[DEPOSIT]` dispatches the truck to the designated processing bay (Bay 1: Recyclable Intake, Bay 2: Hazardous Quarantine, Bay 3: Reusable Grading).
+3. **Graphic Feedback**: Truck arrival logs the transaction as `COMPLETED`, adds credits to user balance, and illuminates the bay!
 
 ---
 
