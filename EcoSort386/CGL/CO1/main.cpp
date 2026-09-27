@@ -199,8 +199,8 @@ void stage5() {
     drawRect(fx + 0.22f, fy + fh - 0.12f, fw - 0.44f, 0.09f, 0, 0.45f, 0.35f);
     drawText(fx + 0.27f, fy + fh - 0.09f, "CENTRAL E-WASTE RECOVERY & PROCESSING DEPOT", 1, 1, 1);
     drawText(-0.95f, -0.95f, "[Keys 1-5]: Stages | [R/H/U/Click Bins]: Select | [D/Enter]: Deposit & Dispatch | [Space]: Pause", 0.2f, 0.2f, 0.2f);
-    snprintf(buf, sizeof(buf), "User Credits: %d Cr", br.userCredits);
-    drawText(0.72f, -0.95f, buf, 0, 0.45f, 0.25f);
+    snprintf(buf, sizeof(buf), "Load: %.1f kg | %d Cr", br.lastItemWeight, br.userCredits);
+    drawText(0.60f, -0.95f, buf, 0, 0.45f, 0.25f);
 }
 
 void display() {

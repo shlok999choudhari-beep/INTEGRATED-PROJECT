@@ -48,6 +48,8 @@ struct BridgePacket {
     int txState; // 0: Idle/Select, 1: Dispatched, 2: Completed
     int userCredits;
     int queueLength;
+    float lastItemWeight;
+    float totalWeight;
     uint32_t seq;
 };
 
@@ -68,6 +70,8 @@ private:
         totalRecycledKg = 84.5f;
         totalHazardKg = 32.0f;
         totalReusableKg = 48.0f;
+        lastItemWeight = 5.0f;
+        totalWeight = 164.5f;
         queueLength = 3;
         localSeq = 1;
         lastReadSeq = 0;
@@ -93,6 +97,8 @@ public:
     float totalRecycledKg;
     float totalHazardKg;
     float totalReusableKg;
+    float lastItemWeight;
+    float totalWeight;
     int queueLength;
 
     static Bridge& get() {
@@ -108,6 +114,8 @@ public:
             p.txState = txState;
             p.userCredits = userCredits;
             p.queueLength = queueLength;
+            p.lastItemWeight = lastItemWeight;
+            p.totalWeight = totalWeight;
             p.seq = ++localSeq;
             fwrite(&p, sizeof(p), 1, f);
             fclose(f);
@@ -124,6 +132,8 @@ public:
                     activeCategory = p.activeCategory;
                     userCredits = p.userCredits;
                     queueLength = p.queueLength;
+                    lastItemWeight = p.lastItemWeight;
+                    totalWeight = p.totalWeight;
                     txState = p.txState;
                     if (p.txState == 1) {
                         truckX = getSpawnX();
@@ -176,8 +186,10 @@ public:
         return 0.65f;
     }
 
-    void triggerDeposit() {
+    void triggerDeposit(float weight = 5.0f) {
         txState = 1;
+        lastItemWeight = weight;
+        totalWeight += weight;
         truckX = getSpawnX();
         destX = getBayX();
         queueLength++;
@@ -189,9 +201,9 @@ public:
         truckX = destX;
         userCredits += getCategoryReward();
         if (queueLength > 0) queueLength--;
-        if (activeCategory == CAT_RECYCLABLE) totalRecycledKg += 2.5f;
-        else if (activeCategory == CAT_HAZARDOUS) totalHazardKg += 1.8f;
-        else totalReusableKg += 4.2f;
+        if (activeCategory == CAT_RECYCLABLE) totalRecycledKg += lastItemWeight;
+        else if (activeCategory == CAT_HAZARDOUS) totalHazardKg += lastItemWeight;
+        else totalReusableKg += lastItemWeight;
         saveIPC();
     }
 };

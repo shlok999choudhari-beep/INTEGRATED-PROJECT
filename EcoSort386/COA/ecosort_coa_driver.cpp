@@ -113,18 +113,18 @@ int main() {
                 lastCat = br.activeCategory;
                 eventCount++;
 
-                int64_t itemWeight = (br.activeCategory == 1 ? 4 : (br.activeCategory == 2 ? 12 : 8));
-                int64_t totalWeight = (int64_t)(br.totalRecycledKg + br.totalHazardKg + br.totalReusableKg) + itemWeight;
-                int64_t rate = (br.activeCategory == 1 ? 40 : (br.activeCategory == 2 ? 80 : 60));
+                int64_t itemWeight = (int64_t)(br.lastItemWeight > 0.1f ? br.lastItemWeight : 5.0f);
+                int64_t totalWeight = (int64_t)br.totalWeight;
+                int64_t rate = 50; // Standard rate: Rs 50/kg
                 int64_t val = itemWeight * rate;
                 bool highPriority = (itemWeight >= 10);
 
                 std::cout << "\n>>> [HW SENSOR INTERRUPT #" << eventCount << "] LIVE E-WASTE PAYLOAD DETECTED <<<\n";
                 std::cout << "  Hardware Category    : " << br.getCategoryName() << "\n";
-                std::cout << "  Load Cell Weight     : " << itemWeight << " kg\n";
+                std::cout << "  Load Cell Weight     : " << itemWeight << " kg (Live PL Input)\n";
                 std::cout << "  [ASM: ADD RAX, RCX]   Accumulated Depot Weight : " << totalWeight << " kg (RAX=0x" << std::hex << totalWeight << std::dec << ")\n";
                 std::cout << "  [ASM: MUL RCX]       Subsidy Credit Valuation : Rs " << val << " (RAX=0x" << std::hex << val << std::dec << ")\n";
-                std::cout << "  [ASM: CMP RAX, 10]   Threshold Comparison     : " << (highPriority ? "12 >= 10 (HIGH PRIORITY)" : "BELOW THRESHOLD") << "\n";
+                std::cout << "  [ASM: CMP RAX, 10]   Threshold Comparison     : " << itemWeight << (highPriority ? " >= 10 (THRESHOLD EXCEEDED)" : " < 10 (BELOW LIMIT)") << "\n";
                 if (highPriority) {
                     std::cout << "  [ASM: JGE BRANCH]    Priority Status          : *** HIGH PRIORITY / QUARANTINE PROTOCOL ***\n";
                 } else {
