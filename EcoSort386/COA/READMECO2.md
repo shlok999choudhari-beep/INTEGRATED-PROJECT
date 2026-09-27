@@ -1,5 +1,3 @@
-Absolutely. Since your CO2 implementation is now complete, you can explain it in the **same presentation style as your DS script**.
-
 # EcoSort 386 – COA / CO2 Assembly Implementation
 
 **Good morning sir/mam.**
