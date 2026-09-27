@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include "../ecosort_bridge.h"
 using namespace std;
 
 const int MAX = 100;
@@ -283,9 +284,12 @@ public:
         }
 
         collectionList.insert(w);
+        int bridgeCat = (choice == 1 ? EcoSortCore::CAT_REUSABLE : (choice == 2 ? EcoSortCore::CAT_RECYCLABLE : EcoSortCore::CAT_HAZARDOUS));
+        EcoSortCore::Bridge::get().setCategory(bridgeCat);
+        EcoSortCore::Bridge::get().triggerDeposit();
 
         cout << "\nCollection request added.\n";
-        cout << "Priority: " << w->priority() << endl;
+        cout << "Priority: " << w->priority() << " | Synced to CGL Kiosk Queue!" << endl;
     }
 
     void showCollectionRequests()
@@ -330,6 +334,9 @@ public:
         while (!collectionQueue.empty())
         {
             w = collectionQueue.dequeue();
+            int catId = (w->getCategory() == "Reusable" ? EcoSortCore::CAT_REUSABLE : (w->getCategory() == "Recyclable" ? EcoSortCore::CAT_RECYCLABLE : EcoSortCore::CAT_HAZARDOUS));
+            EcoSortCore::Bridge::get().setCategory(catId);
+            EcoSortCore::Bridge::get().completeDeposit();
 
             if (w->getCategory() == "Reusable")
                 reusableStack.push(w);

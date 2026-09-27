@@ -101,10 +101,36 @@ Feel free to modify these shaders (add lighting, textures, animations) and resta
 
 ---
 
-## 🚀 Recommended Next Steps
+---
 
-1. **Add Textures**: Load PNG/JPG textures using `stb_image.h` in C++ or `Pillow` in Python.
-2. **Implement Lighting**: Follow the Phong / Blinn-Phong lighting model (ambient, diffuse, specular).
-3. **Explore Tutorials**:
-   - [LearnOpenGL.com](https://learnopengl.com/) — The gold standard for modern OpenGL programming.
-   - [OpenGL Specification](https://registry.khronos.org/OpenGL/specs/gl/) — Official Khronos reference.
+# 🌿 EcoSort 386 — Integrated Multi-Subject Engineering Project
+
+**EcoSort 386** is an integrated Smart Municipal E-Waste Segregation & Recovery System uniting 4 engineering laboratory disciplines:
+
+```text
+EcoSort386/
+├── CGL/                                 # Computer Graphics Laboratory (OpenGL / GLFW)
+│   ├── CO1/                             # Primitives, 2D Kiosk, Truck Animation (292 lines)
+│   ├── CO2/                             # Bresenham & DDA Line/Circle Rasterization (295 lines)
+│   └── CO3/                             # 2D/3D Transforms, Cohen-Sutherland & Sutherland-Hodgman Clipping, Dynamic Viewports (299 lines)
+├── COA/                                 # Computer Organization & Architecture
+│   ├── ecosort.asm                      # 64-bit x86 NASM Assembly (ADD, SUB, MUL, DIV, CMP, JGE)
+│   ├── ecosort_coa_driver.cpp           # 64-bit C++ Architecture Verification Driver
+│   ├── build_coa.bat & run_coa.bat      # Single-click build & launcher
+│   └── README.md & READMECO2.md         # Full assembly telemetry documentation
+└── PL and PSOOP/                        # Programming Laboratory & PSOOP (Integrated)
+    ├── PL&PSOOPCO1&2.cpp                # Pure Virtual Waste, Dynamic Polymorphism, Linked List, Queue, Stacks
+    ├── build.bat & run.bat              # Single-click build & launcher
+    └── README.md                        # Combined architecture & practical documentation
+```
+
+### ⚡ Quick-Run All Subjects
+
+| Subject | Directory | Command | What It Runs |
+| :--- | :--- | :--- | :--- |
+| **CGL CO1** | `EcoSort386/CGL/CO1` | `run_co1.bat` | Interactive 2D Kiosk, moving collection truck, spoke rotation, buttons |
+| **CGL CO2** | `EcoSort386/CGL/CO2` | `run_co2.bat` | Bresenham & DDA Line/Circle algorithms, radar scanner station |
+| **CGL CO3** | `EcoSort386/CGL/CO3` | `run_co3.bat` | 2D/3D Transforms, Line & Polygon clipping, dynamic dual viewports |
+| **COA** | `EcoSort386/COA` | `run_coa.bat` | 64-bit assembly arithmetic, register telemetry, priority branching |
+| **PL & PSOOP** | `EcoSort386/PL and PSOOP` | `run.bat` | Citizen request Linked List, truck dispatch Queue, segregation Stacks, and OOP hierarchy |
+

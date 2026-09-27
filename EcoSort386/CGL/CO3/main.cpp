@@ -7,6 +7,7 @@
 #include <vector>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
+#include "../../ecosort_bridge.h"
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -228,8 +229,8 @@ void stage5(int w, int h) {
     }
     glEnd();
     drawRect(10.0f, 2.0f, 80.0f, 12.0f, 0.08f, 0.10f, 0.14f);
-    drawText(13.0f, 8.0f, "Recyclable: 84.2 kg/h | Gold Extracted: 99.4%", 0.1f, 0.9f, 0.4f);
-    drawText(13.0f, 4.0f, "Hazard Quarantine: ZERO TOXIC LEAKAGE", 0.95f, 0.8f, 0.2f);
+    char m[96]; snprintf(m, sizeof(m), "Recycled: %.1f kg | Active Queue: %d", EcoSortCore::Bridge::get().totalRecycledKg, EcoSortCore::Bridge::get().queueLength);
+    drawText(13.0f, 8.0f, m, 0.1f, 0.9f, 0.4f); drawText(13.0f, 4.0f, "Hazard Quarantine: ZERO TOXIC LEAKAGE", 0.95f, 0.8f, 0.2f);
 }
 
 void display(GLFWwindow* win) {

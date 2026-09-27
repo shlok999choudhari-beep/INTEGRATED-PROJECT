@@ -7,13 +7,15 @@
 #include <vector>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
+#include "../../ecosort_bridge.h"
+using namespace EcoSortCore;
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
 
 const unsigned int SCR_WIDTH = 900, SCR_HEIGHT = 650;
 const char* SCR_TITLE = "EcoSort 386 - CGL CO1 Kiosk & Dispatch";
-int stage = 5, binType = 1, txState = 0, credits = 140;
+int stage = 5;
 bool captureAll = false, animating = true;
 float truckX = -0.05f, destX = -0.28f;
 GLuint fontBase = 0;
@@ -149,25 +151,25 @@ void stage4() {
 }
 
 void triggerDeposit() {
-    if (txState == 1) return;
-    txState = 1;
-    truckX = (binType == 1) ? -0.90f : (binType == 2 ? -0.28f : 0.65f);
-    destX = (binType == 1) ? -0.45f : (binType == 2 ? -0.10f : 0.30f);
+    auto& br = Bridge::get();
+    br.triggerDeposit();
+    truckX = br.truckX; destX = br.destX;
 }
 
 void stage5() {
+    auto& br = Bridge::get();
     glClearColor(0.85f, 0.92f, 0.98f, 1); glClear(GL_COLOR_BUFFER_BIT);
     drawRect(-1, 0.82f, 2, 0.18f, 0.08f, 0.18f, 0.28f);
     drawText(-0.90f, 0.93f, "ECOSORT 386 - SMART E-WASTE DEPOSIT KIOSK & DISPATCH", 1, 1, 1);
     char buf[128];
-    if (txState == 0) snprintf(buf, sizeof(buf), "[KIOSK] Active: %s (+%d Cr) | Press [D / ENTER] or Click Button to Deposit", binType == 1 ? "RECYCLABLE (PCBs)" : (binType == 2 ? "HAZARDOUS (Batteries)" : "REUSABLE (Monitors)"), binType == 1 ? 40 : (binType == 2 ? 60 : 80));
-    else if (txState == 1) snprintf(buf, sizeof(buf), "[TRANSACTION IN PROGRESS] Dispatching E-Waste Truck to Intake Bay %d...", binType == 1 ? 1 : (binType == 2 ? 2 : 3));
-    else snprintf(buf, sizeof(buf), "[TRANSACTION COMPLETE] Verified at Bay %d! User Balance: %d Credits", binType == 1 ? 1 : (binType == 2 ? 2 : 3), credits);
-    drawText(-0.90f, 0.86f, buf, txState == 2 ? 0.3f : 0.4f, txState == 2 ? 1.0f : 0.85f, txState == 2 ? 0.4f : 0.75f);
+    if (br.txState == 0) snprintf(buf, sizeof(buf), "[KIOSK] Active: %s (+%d Cr) | Press [D / ENTER] or Click Button to Deposit", br.getCategoryName(), br.getCategoryReward());
+    else if (br.txState == 1) snprintf(buf, sizeof(buf), "[TRANSACTION IN PROGRESS] Dispatching E-Waste Truck to Intake Bay %d...", br.getTargetBay());
+    else snprintf(buf, sizeof(buf), "[TRANSACTION COMPLETE] Verified at Bay %d! User Balance: %d Credits", br.getTargetBay(), br.userCredits);
+    drawText(-0.90f, 0.86f, buf, br.txState == 2 ? 0.3f : 0.4f, br.txState == 2 ? 1.0f : 0.85f, br.txState == 2 ? 0.4f : 0.75f);
 
-    drawRect(0.52f, 0.85f, 0.42f, 0.10f, txState == 1 ? 0.5f : 0.0f, txState == 1 ? 0.5f : 0.65f, txState == 1 ? 0.5f : 0.35f);
+    drawRect(0.52f, 0.85f, 0.42f, 0.10f, br.txState == 1 ? 0.5f : 0.0f, br.txState == 1 ? 0.5f : 0.65f, br.txState == 1 ? 0.5f : 0.35f);
     drawRectOutline(0.52f, 0.85f, 0.42f, 0.10f, 1, 1, 1, 1.5f);
-    drawText(0.56f, 0.89f, txState == 1 ? "DISPATCHING..." : ">> CLICK TO DEPOSIT <<", 1, 1, 1);
+    drawText(0.56f, 0.89f, br.txState == 1 ? "DISPATCHING..." : ">> CLICK TO DEPOSIT <<", 1, 1, 1);
 
     drawBuilding(-0.92f, 0.18f, 0.30f, 0.48f, 0.35f, 0.40f, 0.48f, "IT Tech Park");
     drawBuilding(-0.55f, 0.18f, 0.26f, 0.44f, 0.48f, 0.42f, 0.38f, "Residency Block");
@@ -178,9 +180,9 @@ void stage5() {
     glLineWidth(3.0f); glColor3f(0.98f, 0.85f, 0.1f); glBegin(GL_LINES); for (float x = -0.96f; x < 1; x += 0.20f) { glVertex2f(x, -0.05f); glVertex2f(x + 0.10f, -0.05f); } glEnd();
     drawRect(-1, -0.32f, 2, 0.10f, 0.68f, 0.70f, 0.72f);
 
-    drawBin(-0.90f, 0.15f, 0.14f, 0.24f, 0, 0.75f, 0.25f, "R", "Recycle [R]", true, binType == 1);
-    drawBin(-0.25f, 0.15f, 0.14f, 0.24f, 0.88f, 0.15f, 0.15f, "H", "Hazard [H]", true, binType == 2);
-    drawBin( 0.72f, 0.15f, 0.14f, 0.24f, 0, 0.45f, 0.90f, "U", "Reuse [U]", true, binType == 3);
+    drawBin(-0.90f, 0.15f, 0.14f, 0.24f, 0, 0.75f, 0.25f, "R", "Recycle [R]", true, br.activeCategory == 1);
+    drawBin(-0.25f, 0.15f, 0.14f, 0.24f, 0.88f, 0.15f, 0.15f, "H", "Hazard [H]", true, br.activeCategory == 2);
+    drawBin( 0.72f, 0.15f, 0.14f, 0.24f, 0, 0.45f, 0.90f, "U", "Reuse [U]", true, br.activeCategory == 3);
 
     drawTruck(truckX, -0.18f);
 
@@ -190,14 +192,14 @@ void stage5() {
     drawRectOutline(fx, fy, fw, fh, 0.2f, 0.3f, 0.35f, 2.0f);
     const char* bays[] = { "BAY 1: INTAKE", "BAY 2: HAZARD", "BAY 3: REUSE" };
     for (int i = 0; i < 3; i++) {
-        bool act = (txState > 0 && binType == i + 1);
+        bool act = (br.txState > 0 && br.activeCategory == i + 1);
         drawRect(fx + 0.12f + i * 0.38f, fy, 0.26f, 0.28f, act ? 0.12f : 0.3f, act ? 0.60f : 0.35f, act ? 0.35f : 0.40f);
         drawText(fx + 0.16f + i * 0.38f, fy + 0.12f, bays[i], 1, 1, 1);
     }
     drawRect(fx + 0.22f, fy + fh - 0.12f, fw - 0.44f, 0.09f, 0, 0.45f, 0.35f);
     drawText(fx + 0.27f, fy + fh - 0.09f, "CENTRAL E-WASTE RECOVERY & PROCESSING DEPOT", 1, 1, 1);
     drawText(-0.95f, -0.95f, "[Keys 1-5]: Stages | [R/H/U/Click Bins]: Select | [D/Enter]: Deposit & Dispatch | [Space]: Pause", 0.2f, 0.2f, 0.2f);
-    snprintf(buf, sizeof(buf), "User Credits: %d Cr", credits);
+    snprintf(buf, sizeof(buf), "User Credits: %d Cr", br.userCredits);
     drawText(0.72f, -0.95f, buf, 0, 0.45f, 0.25f);
 }
 
@@ -216,9 +218,9 @@ void mouse_button_callback(GLFWwindow* w, int button, int action, int mods) {
         double mx, my; glfwGetCursorPos(w, &mx, &my);
         int width, height; glfwGetWindowSize(w, &width, &height);
         float ox = (float)mx / width * 2.0f - 1.0f, oy = 1.0f - (float)my / height * 2.0f;
-        if (ox >= -0.92f && ox <= -0.74f && oy >= 0.12f && oy <= 0.45f) { binType = 1; txState = 0; }
-        else if (ox >= -0.27f && ox <= -0.09f && oy >= 0.12f && oy <= 0.45f) { binType = 2; txState = 0; }
-        else if (ox >= 0.70f && ox <= 0.88f && oy >= 0.12f && oy <= 0.45f) { binType = 3; txState = 0; }
+        if (ox >= -0.92f && ox <= -0.74f && oy >= 0.12f && oy <= 0.45f) Bridge::get().setCategory(1);
+        else if (ox >= -0.27f && ox <= -0.09f && oy >= 0.12f && oy <= 0.45f) Bridge::get().setCategory(2);
+        else if (ox >= 0.70f && ox <= 0.88f && oy >= 0.12f && oy <= 0.45f) Bridge::get().setCategory(3);
         else if (ox >= 0.52f && ox <= 0.94f && oy >= 0.85f && oy <= 0.95f) triggerDeposit();
     }
 }
@@ -226,9 +228,9 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     if (action != GLFW_PRESS && action != GLFW_REPEAT) return;
     if (key >= GLFW_KEY_1 && key <= GLFW_KEY_5) stage = key - GLFW_KEY_0;
     else if (key == GLFW_KEY_SPACE) animating = !animating;
-    else if (key == GLFW_KEY_R) { binType = 1; txState = 0; }
-    else if (key == GLFW_KEY_H) { binType = 2; txState = 0; }
-    else if (key == GLFW_KEY_U) { binType = 3; txState = 0; }
+    else if (key == GLFW_KEY_R) Bridge::get().setCategory(1);
+    else if (key == GLFW_KEY_H) Bridge::get().setCategory(2);
+    else if (key == GLFW_KEY_U) Bridge::get().setCategory(3);
     else if (key == GLFW_KEY_D || key == GLFW_KEY_ENTER) triggerDeposit();
     else if (key == GLFW_KEY_RIGHT) truckX += 0.035f;
     else if (key == GLFW_KEY_LEFT) truckX -= 0.035f;
@@ -271,11 +273,14 @@ int main(int argc, char** argv) {
     while (!glfwWindowShouldClose(window)) {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
         if (animating && stage == 5) {
-            if (txState == 1) {
+            auto& br = Bridge::get();
+            br.syncIPC();
+            if (br.txState == 1) {
+                if (destX != br.destX) { truckX = br.truckX; destX = br.destX; }
                 truckX += 0.005f;
                 if (truckX >= destX) {
-                    truckX = destX; txState = 2;
-                    credits += (binType == 1 ? 40 : (binType == 2 ? 60 : 80));
+                    br.completeDeposit();
+                    truckX = destX;
                 }
             } else {
                 truckX += 0.0032f;
