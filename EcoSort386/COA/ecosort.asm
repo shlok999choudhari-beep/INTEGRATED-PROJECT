@@ -15,6 +15,11 @@ section .data
     high_msg db "Priority             : HIGH PRIORITY", 10, 0
     normal_msg db "Priority             : NORMAL PRIORITY", 10, 0
 
+    decision_banner db 10, "===== DECISION TEST CASES (COA x86-64 EVALUATION) =====", 10, 0
+    dec_reusable_msg db "Reusable, 3 kg: Check if it can be reused or repaired.", 10, 0
+    dec_recyclable_msg db "Recyclable, 12 kg: Send to priority recycling batch.", 10, 0
+    dec_hazardous_msg db "Hazardous, 2 kg: Send for special hazardous-waste handling.", 10, 0
+
 section .text
 
 main:
@@ -137,7 +142,7 @@ main:
     call printf
     add rsp, 40
 
-    jmp program_end
+    jmp test_decisions
 
 
 high_priority:
@@ -145,6 +150,56 @@ high_priority:
     ; Weight >= 10
     lea rcx, [rel high_msg]
 
+    sub rsp, 40
+    call printf
+    add rsp, 40
+
+
+test_decisions:
+
+    ; ------------------------------------------
+    ; 6. CATEGORY-BASED DECISION LOGIC
+    ; Mapped from PSOOP CO4 / EcoSort test cases:
+    ; Case 1: Reusable, 3 kg -> Repair / Reuse
+    ; Case 2: Recyclable, 12 kg (>= 10 kg) -> Priority
+    ; Case 3: Hazardous, 2 kg -> Special Handling
+    ; ------------------------------------------
+
+    lea rcx, [rel decision_banner]
+    sub rsp, 40
+    call printf
+    add rsp, 40
+
+    ; Case 1: Category = 1 (Reusable), Weight = 3 kg
+    mov rcx, 1
+    cmp rcx, 1
+    jne .check_case2
+    lea rcx, [rel dec_reusable_msg]
+    sub rsp, 40
+    call printf
+    add rsp, 40
+
+.check_case2:
+    ; Case 2: Category = 2 (Recyclable), Weight = 12 kg, Threshold = 10 kg
+    mov rcx, 2
+    mov rax, 12
+    cmp rax, 10
+    jl .case2_normal
+    lea rcx, [rel dec_recyclable_msg]
+    sub rsp, 40
+    call printf
+    add rsp, 40
+    jmp .check_case3
+
+.case2_normal:
+    ; (Not reached in test case 2)
+
+.check_case3:
+    ; Case 3: Category = 3 (Hazardous), Weight = 2 kg
+    mov rcx, 3
+    cmp rcx, 3
+    jne program_end
+    lea rcx, [rel dec_hazardous_msg]
     sub rsp, 40
     call printf
     add rsp, 40

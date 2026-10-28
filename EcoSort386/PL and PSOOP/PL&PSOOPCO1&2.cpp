@@ -6,9 +6,10 @@
 using namespace std;
 
 const int MAX = 20;
+const double PRIORITY_LIMIT = 10.0;
 
 // ======================================================
-// PSOOP : BASE CLASS
+// PSOOP CO1 : BASE CLASS (ABSTRACTION & POLYMORPHISM)
 // ======================================================
 
 class Waste
@@ -38,6 +39,11 @@ public:
         return id;
     }
 
+    string getName()
+    {
+        return name;
+    }
+
     double getWeight()
     {
         return weight;
@@ -53,7 +59,7 @@ public:
         return category();
     }
 
-    void display()
+    virtual void display()
     {
         cout << "ID: " << id
              << " | Name: " << name
@@ -67,7 +73,7 @@ public:
 };
 
 // ======================================================
-// PSOOP : INHERITANCE + POLYMORPHISM
+// PSOOP CO1 : INHERITANCE + POLYMORPHISM
 // ======================================================
 
 class Reusable : public Waste
@@ -78,12 +84,12 @@ public:
     {
     }
 
-    string category()
+    string category() override
     {
         return "Reusable";
     }
 
-    int priority()
+    int priority() override
     {
         return 1;
     }
@@ -97,12 +103,12 @@ public:
     {
     }
 
-    string category()
+    string category() override
     {
         return "Recyclable";
     }
 
-    int priority()
+    int priority() override
     {
         return 2;
     }
@@ -116,12 +122,12 @@ public:
     {
     }
 
-    string category()
+    string category() override
     {
         return "Hazardous";
     }
 
-    int priority()
+    int priority() override
     {
         return 3;
     }
@@ -136,6 +142,12 @@ struct Node
 {
     Waste *data;
     Node *next;
+
+    Node(Waste *w = NULL)
+    {
+        data = w;
+        next = NULL;
+    }
 };
 
 class WasteList
@@ -149,12 +161,23 @@ public:
         head = NULL;
     }
 
+    // CHECK FOR DUPLICATE ID (PSOOP CO3 / PL CO2)
+    bool hasID(int id)
+    {
+        Node *temp = head;
+        while (temp != NULL)
+        {
+            if (temp->data->getId() == id)
+                return true;
+            temp = temp->next;
+        }
+        return false;
+    }
+
     // INSERT WASTE INTO LINKED LIST
     void insert(Waste *w)
     {
-        Node *newNode = new Node;
-        newNode->data = w;
-        newNode->next = NULL;
+        Node *newNode = new Node(w);
 
         if (head == NULL)
         {
@@ -169,6 +192,11 @@ public:
             }
             temp->next = newNode;
         }
+    }
+
+    void add(Waste *w)
+    {
+        insert(w);
     }
 
     // DISPLAY COLLECTION REQUESTS
@@ -191,7 +219,7 @@ public:
         }
     }
 
-    // SEARCH
+    // PL CO4: LINEAR SEARCH
     Waste* search(int id)
     {
         Node *temp = head;
@@ -425,7 +453,7 @@ public:
 };
 
 // ======================================================
-// ECOSORT MANAGER
+// PSOOP CO2 : ECOSORT MANAGER (OBJECT-ORIENTED COORDINATOR)
 // ======================================================
 
 class EcoSort
@@ -439,105 +467,80 @@ private:
     HashTable hashTable;
 
 public:
-    // CREATE APPROPRIATE OBJECT
-    Waste* createWaste(int id, string name, double weight, int choice)
+    // PSOOP CO3: VALIDATION AND EXCEPTION HANDLING
+    Waste* makeWaste(int id, string name, double weight, int choice)
     {
+        if (id <= 0)
+            throw invalid_argument("ID must be greater than zero.");
+
+        if (name.empty())
+            throw invalid_argument("Name cannot be empty.");
+
+        if (weight <= 0)
+            throw invalid_argument("Weight must be greater than zero.");
+
+        if (choice < 1 || choice > 3)
+            throw invalid_argument("Choose category 1, 2 or 3.");
+
+        if (collectionList.hasID(id))
+            throw invalid_argument("This ID already exists.");
+
         if (choice == 1)
-        {
             return new Reusable(id, name, weight);
-        }
-
-        if (choice == 2)
-        {
+        else if (choice == 2)
             return new Recyclable(id, name, weight);
-        }
-
-        if (choice == 3)
-        {
+        else
             return new Hazardous(id, name, weight);
-        }
-
-        return NULL;
     }
 
-    // ADD COLLECTION REQUEST
+    // ADD COLLECTION REQUEST WITH TRY-CATCH (PSOOP CO3)
     void addWaste()
     {
-        int id;
-        int choice;
+        int id, choice;
         string name;
         double weight;
 
-        cout << "\nEnter Waste ID: ";
-        if (!(cin >> id) || id <= 0)
+        try
         {
-            cout << "ID must be a positive number.\n";
-            cin.clear(); cin.ignore(10000, '\n');
-            return;
+            cout << "\nEnter Waste ID: ";
+            if (!(cin >> id))
+                throw invalid_argument("ID must be a number.");
+
+            cout << "Enter Waste Name (one word): ";
+            cin >> name;
+
+            cout << "Enter Weight (kg): ";
+            if (!(cin >> weight))
+                throw invalid_argument("Weight must be a number.");
+
+            cout << "\n1. Reusable\n2. Recyclable\n3. Hazardous\n";
+            cout << "Choose Category: ";
+            if (!(cin >> choice))
+                throw invalid_argument("Category must be a number.");
+
+            Waste *w = makeWaste(id, name, weight, choice);
+
+            // STORE IN LINKED LIST & HASH TABLE
+            collectionList.insert(w);
+            hashTable.insert(w);
+
+            // Sync with Cross-Process IPC (CGL Kiosk and COA Registers)
+            int bridgeCat = (choice == 1 ? EcoSortCore::CAT_REUSABLE : (choice == 2 ? EcoSortCore::CAT_RECYCLABLE : EcoSortCore::CAT_HAZARDOUS));
+            EcoSortCore::Bridge::get().setCategory(bridgeCat);
+            EcoSortCore::Bridge::get().triggerDeposit((float)weight);
+
+            cout << "\nCollection request added successfully.\n";
+            cout << "Weight: " << w->getWeight() << " kg | Synced to CGL Kiosk Queue & COA Live Telemetry!\n";
+            
+            // PSOOP CO4: Decision-making recommendation
+            recommend(w);
         }
-
-        cout << "Enter Waste Name: ";
-        cin >> name;
-
-        if (name.empty())
+        catch (const exception &e)
         {
-            cout << "Name cannot be empty.\n";
-            return;
+            cout << "\nInput Error: " << e.what() << endl;
+            cin.clear();
+            cin.ignore(10000, '\n');
         }
-
-        cout << "Enter Waste Weight (kg): ";
-        if (!(cin >> weight))
-        {
-            cout << "Weight must be a number.\n";
-            cin.clear(); cin.ignore(10000, '\n');
-            return;
-        }
-
-        if (weight <= 0)
-        {
-            cout << "Weight must be greater than 0.\n";
-            return;
-        }
-
-        if (collectionList.search(id) != NULL)
-        {
-            cout << "This Waste ID already exists. Please use a unique ID.\n";
-            return;
-        }
-
-        cout << "\n1. Reusable";
-        cout << "\n2. Recyclable";
-        cout << "\n3. Hazardous";
-
-        cout << "\nEnter Category: ";
-        if (!(cin >> choice))
-        {
-            cout << "Category must be a number.\n";
-            cin.clear(); cin.ignore(10000, '\n');
-            return;
-        }
-
-        Waste *w = createWaste(id, name, weight, choice);
-
-        if (w == NULL)
-        {
-            cout << "Invalid category.\n";
-            return;
-        }
-
-        // STORE IN LINKED LIST
-        collectionList.insert(w);
-        hashTable.insert(w);
-
-        // Sync with Cross-Process IPC (CGL Kiosk and COA Registers)
-        int bridgeCat = (choice == 1 ? EcoSortCore::CAT_REUSABLE : (choice == 2 ? EcoSortCore::CAT_RECYCLABLE : EcoSortCore::CAT_HAZARDOUS));
-        EcoSortCore::Bridge::get().setCategory(bridgeCat);
-        EcoSortCore::Bridge::get().triggerDeposit((float)weight);
-
-        cout << "\nCollection request added successfully.\n";
-        cout << "Weight: " << w->getWeight() << " kg | Synced to CGL Kiosk Queue & COA Live Telemetry!\n";
-        cout << "Recommendation: ";
-        recommend(w);
     }
 
     // DISPLAY LINKED LIST
@@ -546,13 +549,19 @@ public:
         collectionList.display();
     }
 
-    // SEARCH LINKED LIST
+    // PL CO4: LINEAR SEARCH LINKED LIST
     void searchWaste()
     {
         int id;
 
         cout << "\nEnter ID to search: ";
-        cin >> id;
+        if (!(cin >> id))
+        {
+            cout << "Please enter a number.\n";
+            cin.clear();
+            cin.ignore(10000, '\n');
+            return;
+        }
 
         Waste *result = collectionList.search(id);
 
@@ -567,6 +576,7 @@ public:
         }
     }
 
+    // PL CO4: BUBBLE SORT BY WEIGHT
     void sortWaste()
     {
         Waste *items[MAX];
@@ -575,18 +585,23 @@ public:
         if (total == 0) { cout << "No records to sort.\n"; return; }
 
         for (int i = 0; i < total - 1; ++i)
+        {
             for (int j = 0; j < total - i - 1; ++j)
+            {
                 if (items[j]->getWeight() > items[j + 1]->getWeight())
                 {
                     Waste *temp = items[j];
                     items[j] = items[j + 1];
                     items[j + 1] = temp;
                 }
+            }
+        }
 
         cout << "\n===== WASTE SORTED BY WEIGHT =====\n";
         for (int i = 0; i < total; ++i) items[i]->display();
     }
 
+    // PL CO5: HASH SEARCH
     void searchHash()
     {
         int id, checks;
@@ -598,6 +613,7 @@ public:
         cout << "Hash slots checked: " << checks << endl;
     }
 
+    // PL CO5: COMPARE SEARCH METHODS
     void compareSearch()
     {
         int id, linearChecks = 0, hashChecks;
@@ -610,12 +626,18 @@ public:
         cout << ((temp != NULL && found != NULL) ? "Both methods found the record.\n" : "Record was not found by both methods.\n");
     }
 
+    // PSOOP CO4: SMART DECISION MAKING
     void recommend(Waste *w)
     {
-        if (w->getCategory() == "Hazardous") cout << "Send for special hazardous-waste handling.\n";
-        else if (w->getCategory() == "Reusable") cout << "Check if it can be reused or repaired.\n";
-        else if (w->getWeight() >= 10.0) cout << "Send to priority recycling batch.\n";
-        else cout << "Add to normal recycling batch.\n";
+        cout << "Recommendation: ";
+        if (w->getCategory() == "Hazardous")
+            cout << "Send for special hazardous-waste handling.\n";
+        else if (w->getCategory() == "Reusable")
+            cout << "Check if it can be reused or repaired.\n";
+        else if (w->getWeight() >= PRIORITY_LIMIT)
+            cout << "Send to priority recycling batch.\n";
+        else
+            cout << "Add to normal recycling batch.\n";
     }
 
     void showRecommendations()
@@ -623,9 +645,15 @@ public:
         Node *temp = collectionList.getHead();
         if (temp == NULL) { cout << "No records available.\n"; return; }
         cout << "\n===== SMART RECOMMENDATIONS =====\n";
-        while (temp != NULL) { cout << "Waste ID " << temp->data->getId() << ": "; recommend(temp->data); temp = temp->next; }
+        while (temp != NULL)
+        {
+            cout << "Waste ID " << temp->data->getId() << ": ";
+            recommend(temp->data);
+            temp = temp->next;
+        }
     }
 
+    // PSOOP CO4: TEST CASES
     void testDecisions()
     {
         cout << "\n===== DECISION TEST CASES =====\n"
@@ -634,7 +662,7 @@ public:
              << "Hazardous, 2 kg: Send for special hazardous-waste handling.\n";
     }
 
-    // MOVE LINKED LIST DATA TO QUEUE
+    // MOVE LINKED LIST DATA TO QUEUE (PL CO3)
     void createQueue()
     {
         Node *temp = collectionList.getHead();
@@ -657,7 +685,7 @@ public:
         cout << "\n" << added << " new collection request(s) added to Queue (FIFO).\n";
     }
 
-    // PROCESS QUEUE INTO CATEGORY STACKS
+    // PROCESS QUEUE INTO CATEGORY STACKS (PL CO3)
     void processWaste()
     {
         Waste *w;
@@ -689,7 +717,7 @@ public:
         cout << "\nWaste successfully segregated into category Stacks.\n";
     }
 
-    // DISPLAY STACKS
+    // DISPLAY STACKS (PL CO3)
     void displaySortedWaste()
     {
         reusableStack.display("REUSABLE WASTE");
@@ -697,27 +725,25 @@ public:
         hazardousStack.display("HAZARDOUS WASTE");
     }
 
-    // ==================================================
-    // COA INPUT DATA
-    // ==================================================
+    // SUMMARY & COA INPUT DATA
     void showCOAData()
     {
         double total = collectionList.totalWeight();
         int count = collectionList.count();
 
         cout << "\n====================================";
-        cout << "\n          COA INPUT DATA";
+        cout << "\n   ECOSORT SUMMARY / COA INPUT DATA";
         cout << "\n====================================";
         cout << "\nTotal E-Waste Weight : " << total << " kg";
-        cout << "\nNumber of Waste Types: " << count;
+        cout << "\nNumber of Records    : " << count;
+        cout << "\nPriority Threshold   : " << PRIORITY_LIMIT << " kg";
         cout << "\nRecycling Rate       : Rs 50/kg";
-        cout << "\nPriority Limit       : 10 kg";
         cout << "\n====================================\n";
     }
 };
 
 // ======================================================
-// MAIN
+// MAIN INTERACTIVE MENU
 // ======================================================
 
 int main()
