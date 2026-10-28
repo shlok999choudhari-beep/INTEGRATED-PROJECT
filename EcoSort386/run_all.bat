@@ -1,29 +1,18 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-
+rem COA and the graphical modules use the MSYS2 UCRT64 runtime DLLs.
+if exist "C:\msys64\ucrt64\bin" set "PATH=C:\msys64\ucrt64\bin;%PATH%"
 echo ====================================================
-echo  Launching EcoSort 386 Integrated Multi-Subject System
+echo  EcoSort 386 - Integrated Multi-Subject System
 echo ====================================================
-echo.
-echo Starting 4 synchronized modules...
-echo 1. COA: 64-Bit Processor Register Telemetry
-echo 2. PL and PSOOP: Interactive Queue and Segregation CLI
-echo 3. CGL: Smart City 2D Kiosk and Animated Collection Truck
-echo 4. Interface: Master Graphical Command Panel (Working Buttons)
-echo.
+echo Launching COA, PL/PSOOP, CGL CO1 and the master interface.
+echo Close each window separately when finished.
 
-:: 1. Launch COA in its own console window
-start "EcoSort 386 - COA 64-Bit Register Telemetry" cmd /k "cd /d "%~dp0COA" && call run_coa.bat"
-
-:: 2. Launch PL & PSOOP in its own interactive console window
-start "EcoSort 386 - PL and PSOOP Queue & Segregation" cmd /k "cd /d "%~dp0PL and PSOOP" && call run.bat"
-
-:: 3. Launch CGL CO1 Interactive Kiosk & Animated Moving Truck
-start "EcoSort 386 - CGL Graphics Kiosk" cmd /c "cd /d "%~dp0CGL\CO1" && call run_co1.bat"
-
-:: 4. Launch Dedicated Graphical Control Interface Window
-start "EcoSort 386 - Master System Control Interface" cmd /c "cd /d "%~dp0Interface" && call run.bat"
-
-echo [SUCCESS] All 4 modules launched in synchronized windows!
+rem Start the built programs directly.  This avoids nested cmd/call quoting
+rem problems that can prevent the module batch files from being found.
+start "EcoSort 386 - COA" /D "%~dp0COA" cmd.exe /k .\ecosort_coa.exe
+start "EcoSort 386 - PL and PSOOP" /D "%~dp0PL and PSOOP" cmd.exe /k .\ecosort_pl_psoop.exe
+start "EcoSort 386 - CGL CO1" /D "%~dp0CGL\CO1" .\ecosort_co1.exe
+start "EcoSort 386 - Master Interface" /D "%~dp0Interface" .\ecosort_interface.exe
 endlocal
