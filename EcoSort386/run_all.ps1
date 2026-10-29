@@ -13,15 +13,15 @@ Write-Host "4. Interface: Master Graphical Command Panel (Working Buttons)"
 Write-Host ""
 
 # 1. Launch COA in dedicated console
-Start-Process cmd.exe -ArgumentList "/k cd /d `"$root\COA`" && call run_coa.bat"
+Start-Process -FilePath "cmd.exe" -ArgumentList "/k", "ecosort_coa.exe" -WorkingDirectory "$root\COA"
 
 # 2. Launch PL & PSOOP in dedicated console
-Start-Process cmd.exe -ArgumentList "/k cd /d `"$root\PL and PSOOP`" && call run.bat"
+Start-Process -FilePath "cmd.exe" -ArgumentList "/k", "ecosort_pl_psoop.exe" -WorkingDirectory "$root\PL and PSOOP"
 
 # 3. Launch CGL in its own window
-Start-Process cmd.exe -ArgumentList "/c cd /d `"$root\CGL\CO1`" && call run_co1.bat"
+Start-Process -FilePath "$root\CGL\CO1\ecosort_co1.exe" -WorkingDirectory "$root\CGL\CO1"
 
 # 4. Launch Graphical Interface in its own window
-Start-Process cmd.exe -ArgumentList "/c cd /d `"$root\Interface`" && call run.bat"
+Start-Process -FilePath "$root\Interface\ecosort_interface.exe" -WorkingDirectory "$root\Interface"
 
 Write-Host "[SUCCESS] All 4 modules launched in synchronized windows!" -ForegroundColor Green
