@@ -53,8 +53,11 @@ ecosort_is_high_priority:
     ret
 
 ecosort_classify_waste:
-    ; Waste Decision Classifier mapping directly to PSOOP CO4 / EcoSort rules:
-    ;   RCX = Category Code: 1 = Reusable, 2 = Recyclable, 3 = Hazardous
+    ; Waste Decision Classifier mapping directly to EcoSort Core & PSOOP CO4:
+    ;   RCX = Category Code:
+    ;         EcoSortCore::CAT_RECYCLABLE = 1
+    ;         EcoSortCore::CAT_HAZARDOUS  = 2
+    ;         EcoSortCore::CAT_REUSABLE   = 3
     ;   RDX = Weight (kg)
     ;   R8  = Priority Threshold Limit (10 kg)
     ; Returns action status code in RAX:
@@ -62,12 +65,12 @@ ecosort_classify_waste:
     ;   2 = Normal Recycling (Recyclable, weight < threshold limit)
     ;   3 = Priority Recycling (Recyclable, weight >= threshold limit)
     ;   4 = Hazardous Handling (Send for special hazardous-waste handling)
-    cmp rcx, 1
-    je .is_reusable
     cmp rcx, 3
+    je .is_reusable
+    cmp rcx, 2
     je .is_hazardous
 
-    ; Recyclable (category 2): evaluate weight against threshold limit
+    ; Recyclable (category 1): evaluate weight against threshold limit
     cmp rdx, r8
     jge .is_priority_recycling
     mov eax, 2              ; Code 2: Normal recycling batch
