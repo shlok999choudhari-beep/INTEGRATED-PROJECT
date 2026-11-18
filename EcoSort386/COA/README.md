@@ -52,7 +52,7 @@ COA/
 └── CO4_Integration/                   # Dedicated CO4 processor integration sub-module
     ├── README.md
     ├── build_co4_integration.bat
-    ├── run_co4_integration.bat
+    ├── run_co4.bat
     ├── control_functions.asm
     ├── main.cpp
     └── coa_co4_integration.exe
@@ -109,7 +109,7 @@ run_coa.bat
 ### 3. Run Dedicated CO3 & CO4 Demonstrations
 ```cmd
 cd CO3_Algorithm_String && run_co3_algorithm_string.bat
-cd ..\CO4_Integration && run_co4_integration.bat
+cd ..\CO4_Integration && run_co4.bat
 ```
 
 ---

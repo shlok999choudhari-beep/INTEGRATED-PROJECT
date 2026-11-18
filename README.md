@@ -118,6 +118,8 @@ EcoSort386/
 ├── COA/                                 # Computer Organization & Architecture
 │   ├── ecosort.asm & ecosort_functions.asm # 64-bit x86 NASM Assembly (ADD, SUB, MUL, DIV, CMP, JGE, Decision Classifier)
 │   ├── ecosort_coa_driver.cpp           # 64-bit C++ Architecture Verification Driver
+│   ├── CO3_Algorithm_String/            # Add-and-Shift multiplication & 64-bit assembly string engine
+│   ├── CO4_Integration/                 # Unified CO2 + CO3 assembly System & Processor Pipeline integration
 │   └── build_coa.bat & run_coa.bat      # Single-click build & launcher
 ├── PL and PSOOP/                        # Programming Laboratory & PSOOP (Task 4 Capstone)
 │   ├── PL&PSOOPCO1&2.cpp                # Pure Virtual Waste, Dynamic Polymorphism, File I/O Persistence, Templates, IPC
@@ -138,6 +140,7 @@ EcoSort386/
 | **CGL CO6** | `EcoSort386/CGL/CO6` | `run_co6.bat` | 3D collection truck unloading station with procedural textures and multi-light shading |
 | **COA CO2** | `EcoSort386/COA` | `run_coa.bat` | 64-bit assembly arithmetic, register telemetry, priority branching & decision rules |
 | **COA CO3** | `EcoSort386/COA/CO3_Algorithm_String` | `run_co3.bat` | Add-and-Shift binary multiplication algorithm & 64-bit assembly string processing |
+| **COA CO4** | `EcoSort386/COA/CO4_Integration` | `run_co4.bat` | Unified system pipeline: CO2 + CO3 64-bit assembly driving one complete EcoSort transaction |
 | **PL & PSOOP** | `EcoSort386/PL and PSOOP` | `run.bat` | Citizen request Linked List, truck dispatch Queue, segregation Stacks, File Persistence, and Templates |
 | **Interface** | `EcoSort386/Interface` | `run.bat` | Master graphical control panel with live activity logs and synchronized state buttons |
 | **Integrated Suite** | `EcoSort386` | `run_all.bat` | Unified multi-window launcher menu for all modules simultaneously |
