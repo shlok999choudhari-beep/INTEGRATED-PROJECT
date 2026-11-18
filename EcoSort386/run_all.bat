@@ -12,25 +12,27 @@ echo Select an option to launch:
 echo  [1] Launch Core Multi-Process Suite (COA, PL/PSOOP, CO1 Kiosk, Interface)
 echo  [2] Launch CGL CO2: Automated Dynamic Sorting Assembly Line (Bresenham & DDA)
 echo  [3] Launch CGL CO3: 2D/3D Transforms, Clipping & Dual Viewports
-echo  [4] Launch CGL CO6: 3D Textured & Lit Truck Unloading Station
-echo  [5] Launch COA CO3: Algorithmic Add-and-Shift & 64-Bit Assembly String Engine
-echo  [6] Launch All Modules Simultaneously (Full Synchronized Suite)
+echo  [4] Launch CGL CO4: Polygon Filling Algorithms (Scan-Line, Boundary & Flood Fill)
+echo  [5] Launch CGL CO6: 3D Textured & Lit Truck Unloading Station
+echo  [6] Launch COA CO3: Algorithmic Add-and-Shift & 64-Bit Assembly String Engine
+echo  [7] Launch All Modules Simultaneously (Full Synchronized Suite)
 echo.
 
-set /p "CHOICE=Enter choice (1-6, default 6): "
-if "%CHOICE%"=="" set CHOICE=6
+set /p "CHOICE=Enter choice (1-7, default 7): "
+if "%CHOICE%"=="" set CHOICE=7
 
 if "%CHOICE%"=="1" goto launch_core
 if "%CHOICE%"=="2" goto launch_co2
 if "%CHOICE%"=="3" goto launch_co3
-if "%CHOICE%"=="4" goto launch_co6
-if "%CHOICE%"=="5" goto launch_coaco3
-if "%CHOICE%"=="6" goto launch_all
+if "%CHOICE%"=="4" goto launch_co4
+if "%CHOICE%"=="5" goto launch_co6
+if "%CHOICE%"=="6" goto launch_coaco3
+if "%CHOICE%"=="7" goto launch_all
 
 :launch_core
 echo Launching Core Multi-Process Suite...
 start "EcoSort 386 - COA" /D "%~dp0COA" cmd.exe /k .\ecosort_coa.exe
-start "EcoSort 386 - PL and PSOOP" /D "%~dp0PL and PSOOP" cmd.exe /k .\ecosort_pl_psoop.exe
+start "EcoSort 386 - PL and PSOOP (Task 4)" /D "%~dp0PL and PSOOP" cmd.exe /k .\ecosort_pl_psoop.exe
 start "EcoSort 386 - CGL CO1 Kiosk" /D "%~dp0CGL\CO1" .\ecosort_co1.exe
 start "EcoSort 386 - Master Interface" /D "%~dp0Interface" .\ecosort_interface.exe
 goto end
@@ -43,6 +45,11 @@ goto end
 :launch_co3
 echo Launching CGL CO3 Transforms & Clipping...
 start "EcoSort 386 - CGL CO3 Transformations & Clipping" /D "%~dp0CGL\CO3" .\ecosort_co3.exe
+goto end
+
+:launch_co4
+echo Launching CGL CO4 Polygon Filling...
+start "EcoSort 386 - CGL CO4 Polygon Filling" /D "%~dp0CGL\CO4" .\ecosort_co4.exe
 goto end
 
 :launch_co6
@@ -59,9 +66,10 @@ goto end
 echo Launching All Synchronized Modules...
 start "EcoSort 386 - COA" /D "%~dp0COA" cmd.exe /k .\ecosort_coa.exe
 start "EcoSort 386 - COA CO3 Engine" /D "%~dp0COA\CO3_Algorithm_String" .\coa_co3_algorithm_string.exe
-start "EcoSort 386 - PL and PSOOP" /D "%~dp0PL and PSOOP" cmd.exe /k .\ecosort_pl_psoop.exe
+start "EcoSort 386 - PL and PSOOP (Task 4)" /D "%~dp0PL and PSOOP" cmd.exe /k .\ecosort_pl_psoop.exe
 start "EcoSort 386 - CGL CO1 Kiosk" /D "%~dp0CGL\CO1" .\ecosort_co1.exe
 start "EcoSort 386 - CGL CO2 Conveyor Line" /D "%~dp0CGL\CO2" .\ecosort_co2.exe
+start "EcoSort 386 - CGL CO4 Polygon Filling" /D "%~dp0CGL\CO4" .\ecosort_co4.exe
 start "EcoSort 386 - CGL CO6 3D Unloading Station" /D "%~dp0CGL\CO6" .\ecosort_co6.exe
 start "EcoSort 386 - Master Interface" /D "%~dp0Interface" .\ecosort_interface.exe
 goto end

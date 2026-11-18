@@ -113,13 +113,14 @@ EcoSort386/
 │   ├── CO1/                             # Primitives, 2D Kiosk, Truck Animation
 │   ├── CO2/                             # Dynamic Conveyor Assembly Line via Bresenham & DDA Algorithms
 │   ├── CO3/                             # 2D/3D Transforms, Cohen-Sutherland & Sutherland-Hodgman Clipping, Dual Viewports
+│   ├── CO4/                             # Polygon Filling Algorithms (Scan-Line, 4-Connected Boundary Fill, Flood Fill)
 │   └── CO6/                             # 3D Collection Truck Unloading, Multi-Light Shading & Procedural Textures
 ├── COA/                                 # Computer Organization & Architecture
 │   ├── ecosort.asm & ecosort_functions.asm # 64-bit x86 NASM Assembly (ADD, SUB, MUL, DIV, CMP, JGE, Decision Classifier)
 │   ├── ecosort_coa_driver.cpp           # 64-bit C++ Architecture Verification Driver
 │   └── build_coa.bat & run_coa.bat      # Single-click build & launcher
-├── PL and PSOOP/                        # Programming Laboratory & PSOOP (Integrated)
-│   ├── PL&PSOOPCO1&2.cpp                # Pure Virtual Waste, Dynamic Polymorphism, Linked List, Queue, Stacks, Hash Table
+├── PL and PSOOP/                        # Programming Laboratory & PSOOP (Task 4 Capstone)
+│   ├── PL&PSOOPCO1&2.cpp                # Pure Virtual Waste, Dynamic Polymorphism, File I/O Persistence, Templates, IPC
 │   ├── build.bat & run.bat              # Single-click build & launcher
 │   └── README.md                        # Combined architecture & practical documentation
 ├── Interface/                           # Master 2D Control Dashboard (Bidirectional IPC Bridge)
@@ -133,10 +134,11 @@ EcoSort386/
 | **CGL CO1** | `EcoSort386/CGL/CO1` | `run_co1.bat` | Interactive 2D Kiosk, moving collection truck, spoke rotation, buttons |
 | **CGL CO2** | `EcoSort386/CGL/CO2` | `run_co2.bat` | Dynamic optical sorting assembly line, moving belt, laser scanner, Bresenham & DDA bins |
 | **CGL CO3** | `EcoSort386/CGL/CO3` | `run_co3.bat` | 2D/3D Transforms, Line & Polygon clipping, dynamic dual viewports |
+| **CGL CO4** | `EcoSort386/CGL/CO4` | `run_co4.bat` | Polygon filling algorithms (Scan-Line parity fill, Boundary fill, Flood fill) |
 | **CGL CO6** | `EcoSort386/CGL/CO6` | `run_co6.bat` | 3D collection truck unloading station with procedural textures and multi-light shading |
 | **COA CO2** | `EcoSort386/COA` | `run_coa.bat` | 64-bit assembly arithmetic, register telemetry, priority branching & decision rules |
 | **COA CO3** | `EcoSort386/COA/CO3_Algorithm_String` | `run_co3.bat` | Add-and-Shift binary multiplication algorithm & 64-bit assembly string processing |
-| **PL & PSOOP** | `EcoSort386/PL and PSOOP` | `run.bat` | Citizen request Linked List, truck dispatch Queue, segregation Stacks, and OOP hierarchy |
+| **PL & PSOOP** | `EcoSort386/PL and PSOOP` | `run.bat` | Citizen request Linked List, truck dispatch Queue, segregation Stacks, File Persistence, and Templates |
 | **Interface** | `EcoSort386/Interface` | `run.bat` | Master graphical control panel with live activity logs and synchronized state buttons |
 | **Integrated Suite** | `EcoSort386` | `run_all.bat` | Unified multi-window launcher menu for all modules simultaneously |
 
