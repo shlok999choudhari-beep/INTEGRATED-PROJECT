@@ -4,8 +4,6 @@ bin/
 out/
 freeglut-build/
 cmake-build-*/
-
-# Compiled binaries and libraries
 *.exe
 *.dll
 *.so
