@@ -2,7 +2,12 @@
 setlocal
 cd /d "%~dp0"
 
+rem Add NASM and MinGW paths if present
+if exist "C:\Users\shlok\AppData\Local\bin\NASM\nasm.exe" set "PATH=C:\Users\shlok\AppData\Local\bin\NASM;%PATH%"
+if exist "C:\Users\shlok\AppData\Local\Microsoft\WinGet\Packages\MartinStorsjo.LLVM-MinGW.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\llvm-mingw-20260616-ucrt-x86_64\bin" set "PATH=C:\Users\shlok\AppData\Local\Microsoft\WinGet\Packages\MartinStorsjo.LLVM-MinGW.UCRT_Microsoft.Winget.Source_8wekyb3d8bbwe\llvm-mingw-20260616-ucrt-x86_64\bin;%PATH%"
 if exist "C:\msys64\ucrt64\bin\g++.exe" set "PATH=C:\msys64\ucrt64\bin;%PATH%"
+if exist "C:\msys64\ucrt64\bin\gcc.exe" set "PATH=C:\msys64\ucrt64\bin;%PATH%"
+if exist "C:\msys64\ucrt64\bin\nasm.exe" set "PATH=C:\msys64\ucrt64\bin;%PATH%"
 if exist "C:\msys64\usr\bin\nasm.exe" set "PATH=C:\msys64\usr\bin;%PATH%"
 if exist "C:\msys64\mingw64\bin\g++.exe" set "PATH=C:\msys64\mingw64\bin;%PATH%"
 
