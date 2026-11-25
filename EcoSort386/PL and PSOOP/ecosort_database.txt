@@ -1,1 +1,12 @@
 101,GPU_Board,2.500000,Recyclable
+201,phone,0.250000,Reusable
+202,server,18.500000,Recyclable
+203,battery,1.200000,Hazardous
+204,cable,2.000000,Recyclable
+301,gpu,2.000000,Reusable
+302,mobile,0.300000,Recyclable
+303,battry,1.000000,Hazardous
+304,server,18.000000,Recyclable
+898,bottel,20.000000,Recyclable
+23,pc,2.000000,Recyclable
+13,fdbfzzb,2.000000,Recyclable

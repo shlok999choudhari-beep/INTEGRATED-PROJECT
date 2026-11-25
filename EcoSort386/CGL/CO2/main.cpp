@@ -312,7 +312,8 @@ void updateSimulation(float dt) {
     Bridge& br = Bridge::get();
     if (br.syncIPC()) {
         if (br.txState == 1 && br.lastItemWeight > 0.05f) {
-            const char* defaultName = (br.activeCategory == CAT_HAZARDOUS ? "Li-Ion Battery" : (br.activeCategory == CAT_REUSABLE ? "LED Display" : "Motherboard PCB"));
+            const char* defaultName = (br.lastItemName[0] != '\0' ? br.lastItemName :
+                (br.activeCategory == CAT_HAZARDOUS ? "Li-Ion Battery" : (br.activeCategory == CAT_REUSABLE ? "LED Display" : "Motherboard PCB")));
             spawnConveyorItem(br.activeCategory, br.lastItemWeight, defaultName);
         }
     }
@@ -360,6 +361,9 @@ void updateSimulation(float dt) {
             if (item.y <= item.targetBinY) {
                 item.y = item.targetBinY;
                 item.inBin = true;
+
+                // Complete the IPC transaction cycle once sorted into bin
+                Bridge::get().completeDeposit();
 
                 // Increment live bin metrics
                 if (item.category == CAT_REUSABLE) {

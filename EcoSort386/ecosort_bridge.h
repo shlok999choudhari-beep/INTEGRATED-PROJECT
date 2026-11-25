@@ -50,6 +50,7 @@ struct BridgePacket {
     int queueLength;
     float lastItemWeight;
     float totalWeight;
+    char itemName[32];
     uint32_t seq;
 };
 
@@ -72,6 +73,7 @@ private:
         totalReusableKg = 48.0f;
         lastItemWeight = 5.0f;
         totalWeight = 164.5f;
+        lastItemName[0] = '\0';
         queueLength = 3;
         localSeq = 1;
         lastReadSeq = 0;
@@ -99,6 +101,7 @@ public:
     float totalReusableKg;
     float lastItemWeight;
     float totalWeight;
+    char lastItemName[32];
     int queueLength;
 
     static Bridge& get() {
@@ -110,12 +113,14 @@ public:
         FILE* f = fopen(getIPCFilePath(), "wb");
         if (f) {
             BridgePacket p;
+            memset(&p, 0, sizeof(p));
             p.activeCategory = activeCategory;
             p.txState = txState;
             p.userCredits = userCredits;
             p.queueLength = queueLength;
             p.lastItemWeight = lastItemWeight;
             p.totalWeight = totalWeight;
+            strncpy(p.itemName, lastItemName, sizeof(p.itemName) - 1);
             p.seq = ++localSeq;
             fwrite(&p, sizeof(p), 1, f);
             fclose(f);
@@ -135,6 +140,8 @@ public:
                     lastItemWeight = p.lastItemWeight;
                     totalWeight = p.totalWeight;
                     txState = p.txState;
+                    strncpy(lastItemName, p.itemName, sizeof(lastItemName) - 1);
+                    lastItemName[sizeof(lastItemName) - 1] = '\0';
                     if (p.txState == 1) {
                         truckX = getSpawnX();
                         destX = getBayX();
@@ -186,10 +193,16 @@ public:
         return 0.65f;
     }
 
-    void triggerDeposit(float weight = 5.0f) {
+    void triggerDeposit(float weight = 5.0f, const char* name = nullptr) {
         txState = 1;
         lastItemWeight = weight;
         totalWeight += weight;
+        if (name && name[0] != '\0') {
+            strncpy(lastItemName, name, sizeof(lastItemName) - 1);
+            lastItemName[sizeof(lastItemName) - 1] = '\0';
+        } else {
+            lastItemName[0] = '\0';
+        }
         truckX = getSpawnX();
         destX = getBayX();
         queueLength++;

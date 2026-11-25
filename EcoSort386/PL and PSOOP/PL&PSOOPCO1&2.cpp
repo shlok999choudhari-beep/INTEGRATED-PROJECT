@@ -454,8 +454,7 @@ private:
         else if (w->category() == "Hazardous") catCode = EcoSortCore::CAT_HAZARDOUS;
 
         EcoSortCore::Bridge::get().setCategory(catCode);
-        EcoSortCore::Bridge::get().triggerDeposit((float)w->getWeight());
-        EcoSortCore::Bridge::get().completeDeposit();
+        EcoSortCore::Bridge::get().triggerDeposit((float)w->getWeight(), w->getName().c_str());
 #endif
     }
 

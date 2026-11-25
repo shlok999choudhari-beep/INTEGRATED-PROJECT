@@ -19,6 +19,16 @@
 #include <iomanip>
 #include <stdexcept>
 
+#if __has_include("../ecosort_bridge.h")
+    #include "../ecosort_bridge.h"
+    #define HAVE_ECOSORT_BRIDGE 1
+#elif __has_include("ecosort_bridge.h")
+    #include "ecosort_bridge.h"
+    #define HAVE_ECOSORT_BRIDGE 1
+#else
+    #define HAVE_ECOSORT_BRIDGE 0
+#endif
+
 using namespace std;
 
 const int SIZE = 50;
@@ -372,7 +382,15 @@ public:
             Waste *w = makeWaste(id, name, weight, choice);
             list.add(w);
 
-            cout << "\nWaste added successfully.\n";
+#if HAVE_ECOSORT_BRIDGE
+            int catCode = EcoSortCore::CAT_RECYCLABLE;
+            if (w->category() == "Reusable") catCode = EcoSortCore::CAT_REUSABLE;
+            else if (w->category() == "Hazardous") catCode = EcoSortCore::CAT_HAZARDOUS;
+            EcoSortCore::Bridge::get().setCategory(catCode);
+            EcoSortCore::Bridge::get().triggerDeposit((float)w->getWeight(), w->getName().c_str());
+#endif
+
+            cout << "\nWaste added successfully. Live conveyor dispatch synchronized.\n";
 
             // PSOOP CO4: Decision-making feature.
             recommend(w);
